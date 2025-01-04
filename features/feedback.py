@@ -1,32 +1,44 @@
-import mysql.connector as sql
+import sqlite3
 
 # Connect to the database
-conn = sql.connect(host="localhost", user="root", passwd="root1234", database="kashishg")
-if conn.is_connected():
-    print("Successfully connected to the database")
+conn = sqlite3.connect("comps.db")  # Create or connect to the SQLite database file comps.db
+print("Successfully connected to the database")
 
 # Create cursor
 c1 = conn.cursor()
 
-# Function to record feedback
-def feedback():
-    phoneno = int(input("Please enter your phone number: "))
-    email = input("Please enter your e-mail ID: ")
-    address = input("Please enter your address: ")
-    rating = int(input("Please enter your rating (out of 10): "))
-    comment = input("Please leave a comment: ")
+# Ensure the table exists
+c1.execute('''
+CREATE TABLE IF NOT EXISTS buy_comp_parts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customername TEXT NOT NULL,
+    phoneno INTEGER NOT NULL,
+    email TEXT NOT NULL,
+    address TEXT NOT NULL,
+    computerpart TEXT NOT NULL
+)
+''')
 
-    # Insert feedback into table
-    insert_query = f'''
-    INSERT INTO ratingsandcomment (phoneno, email, address, rating, comment)
-    VALUES ({phoneno}, '{email}', '{address}', {rating}, '{comment}')
+# Function to handle part purchases
+def buy_part():
+    print('---COMPUTER SALES---')
+    customername = input('Please enter your name: ')
+    phoneno = int(input('Please enter your phone number: '))
+    email = input('Please enter your e-mail ID: ')
+    address = input('Please enter your address: ')
+    computerpart = input('Please enter the type of computer part you need: ')
+    
+    # Insert purchase details into table using a parameterized query
+    insert_query = '''
+    INSERT INTO buy_comp_parts (customername, phoneno, email, address, computerpart)
+    VALUES (?, ?, ?, ?, ?)
     '''
-    c1.execute(insert_query)
+    c1.execute(insert_query, (customername, phoneno, email, address, computerpart))
     conn.commit()
-    print("Thank you for your feedback!")
+    print(f"Thank you, {customername}. Your computer part will be delivered shortly.")
 
-# Call the function to record feedback
-feedback()
+# Call the function to simulate buying a part
+buy_part()
 
 # Close the connection
 conn.close()
