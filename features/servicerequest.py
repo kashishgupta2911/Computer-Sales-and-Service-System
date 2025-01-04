@@ -1,12 +1,23 @@
-import mysql.connector as sql
+import sqlite3
 
 # Connect to the database
-conn = sql.connect(host="localhost", user="root", passwd="root1234", database="kashishg")
-if conn.is_connected():
-    print("Successfully connected to the database")
+conn = sqlite3.connect("comps.db")  # Create or connect to the SQLite database file
+print("Successfully connected to the database")
 
 # Create cursor
 c1 = conn.cursor()
+
+# Ensure the table exists
+c1.execute('''
+CREATE TABLE IF NOT EXISTS compservice (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customername TEXT NOT NULL,
+    phoneno INTEGER NOT NULL,
+    email TEXT NOT NULL,
+    address TEXT NOT NULL,
+    service TEXT NOT NULL
+)
+''')
 
 # Function to handle service requests
 def request_service():
@@ -17,12 +28,12 @@ def request_service():
     address = input('Please enter your address: ')
     service = input('Please enter the service you need: ')
     
-    # Insert service request into table
-    insert_query = f'''
+    # Insert service request into table using a parameterized query
+    insert_query = '''
     INSERT INTO compservice (customername, phoneno, email, address, service)
-    VALUES ('{customername}', {phoneno}, '{email}', '{address}', '{service}')
+    VALUES (?, ?, ?, ?, ?)
     '''
-    c1.execute(insert_query)
+    c1.execute(insert_query, (customername, phoneno, email, address, service))
     conn.commit()
     print(f"Thank you, {customername}. Your service request has been recorded.")
 
