@@ -25,7 +25,7 @@ Maintain logs of sales-related and service-related problems.
 Python 3.x
 SQLite3
 
-#How to use
+*How to use*
 1. Setup the Database:
 Run the database setup script to create and populate the necessary tables in comps.db.
 
@@ -43,5 +43,5 @@ Use the request_service() function to record a service request.
 5. Provide Feedback:
 Use the feedback() function to collect ratings and comments from customers
 
-#Future Developments
+*Future Developments*
 - add a GUI (probably using tkinter)
